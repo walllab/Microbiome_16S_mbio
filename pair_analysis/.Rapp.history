@@ -1,0 +1,4 @@
+load("/Users/mmdavid/Microbiome_ok/Microbiome_ASD_16S/pair_analysis_OTU_picrust/tax_selected_all.Rda")
+ls
+ls()
+head(tax_selected_all)

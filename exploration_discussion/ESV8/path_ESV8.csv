@@ -1,0 +1,79 @@
+"","V1","V2","V3"
+"1","K00230","ko00860_ko01100_ko01110","Porphyrin and chlorophyll metabolism
+ _ Metabolic pathways
+ _ Biosynthesis of secondary metabolites
+"
+"2","K00412","ko00190_ko01100_ko02020_ko04260_ko04932_ko05010_ko05012_ko05016","Oxidative phosphorylation
+ _ Metabolic pathways
+ _ Two-component system
+ _ Cardiac muscle contraction
+ _ Non-alcoholic fatty liver disease (NAFLD)
+ _ Alzheimer's disease
+ _ Parkinson's disease
+ _ Huntington's disease
+"
+"3","K00978","ko00500_ko00520_ko01100","Starch and sucrose metabolism
+ _ Amino sugar and nucleotide sugar metabolism
+ _ Metabolic pathways
+"
+"4","K01565","ko00531_ko01100_ko04142","Glycosaminoglycan degradation
+ _ Metabolic pathways
+ _ Lysosome
+"
+"5","K01626","ko00400_ko01100_ko01110_ko01130_ko01230_ko02024","Phenylalanine, tyrosine and tryptophan biosynthesis
+ _ Metabolic pathways
+ _ Biosynthesis of secondary metabolites
+ _ Biosynthesis of antibiotics
+ _ Biosynthesis of amino acids
+ _ Quorum sensing
+"
+"6","K01666","ko00360_ko00362_ko00621_ko00622_ko01100_ko01120_ko01220","Phenylalanine metabolism
+ _ Benzoate degradation
+ _ Dioxin degradation
+ _ Xylene degradation
+ _ Metabolic pathways
+ _ Microbial metabolism in diverse environments
+ _ Degradation of aromatic compounds
+"
+"7","K02551","ko00130_ko01100_ko01110","Ubiquinone and other terpenoid-quinone biosynthesis
+ _ Metabolic pathways
+ _ Biosynthesis of secondary metabolites
+"
+"8","K07516","ko00071_ko00362_ko00650_ko01100_ko01120_ko01200_ko01212","Fatty acid degradation
+ _ Benzoate degradation
+ _ Butanoate metabolism
+ _ Metabolic pathways
+ _ Microbial metabolism in diverse environments
+ _ Carbon metabolism
+ _ Fatty acid metabolism
+"
+"9","K11147","ko00830_ko01100_ko04146","Retinol metabolism
+ _ Metabolic pathways
+ _ Peroxisome
+"
+"10","K11645","ko00010_ko00030_ko00051_ko00680_ko00710_ko01100_ko01110_ko01120_ko01130_ko01200_ko01230","Glycolysis / Gluconeogenesis
+ _ Pentose phosphate pathway
+ _ Fructose and mannose metabolism
+ _ Methane metabolism
+ _ Carbon fixation in photosynthetic organisms
+ _ Metabolic pathways
+ _ Biosynthesis of secondary metabolites
+ _ Microbial metabolism in diverse environments
+ _ Biosynthesis of antibiotics
+ _ Carbon metabolism
+ _ Biosynthesis of amino acids
+"
+"11","K12111","ko00052_ko00511_ko01100","Galactose metabolism
+ _ Other glycan degradation
+ _ Metabolic pathways
+"
+"12","K13829","ko00400_ko01100_ko01110_ko01130_ko01230","Phenylalanine, tyrosine and tryptophan biosynthesis
+ _ Metabolic pathways
+ _ Biosynthesis of secondary metabolites
+ _ Biosynthesis of antibiotics
+ _ Biosynthesis of amino acids
+"
+"13","K17398","ko00270_ko01100_ko05206","Cysteine and methionine metabolism
+ _ Metabolic pathways
+ _ MicroRNAs in cancer
+"

@@ -1,0 +1,129 @@
+"","V1","V2","V3"
+"1","K00012","ko00040_ko00053_ko00520_ko01100","Pentose and glucuronate interconversions
+ _ Ascorbate and aldarate metabolism
+ _ Amino sugar and nucleotide sugar metabolism
+ _ Metabolic pathways
+"
+"2","K00031","ko00020_ko00480_ko00720_ko01100_ko01110_ko01120_ko01130_ko01200_ko01210_ko01230_ko04146","Citrate cycle (TCA cycle)
+ _ Glutathione metabolism
+ _ Carbon fixation pathways in prokaryotes
+ _ Metabolic pathways
+ _ Biosynthesis of secondary metabolites
+ _ Microbial metabolism in diverse environments
+ _ Biosynthesis of antibiotics
+ _ Carbon metabolism
+ _ 2-Oxocarboxylic acid metabolism
+ _ Biosynthesis of amino acids
+ _ Peroxisome
+"
+"3","K00145","ko00220_ko01100_ko01110_ko01130_ko01210_ko01230","Arginine biosynthesis
+ _ Metabolic pathways
+ _ Biosynthesis of secondary metabolites
+ _ Biosynthesis of antibiotics
+ _ 2-Oxocarboxylic acid metabolism
+ _ Biosynthesis of amino acids
+"
+"4","K00620","ko00220_ko01100_ko01110_ko01130_ko01210_ko01230","Arginine biosynthesis
+ _ Metabolic pathways
+ _ Biosynthesis of secondary metabolites
+ _ Biosynthesis of antibiotics
+ _ 2-Oxocarboxylic acid metabolism
+ _ Biosynthesis of amino acids
+"
+"5","K00681","ko00430_ko00460_ko00480_ko01100","Taurine and hypotaurine metabolism
+ _ Cyanoamino acid metabolism
+ _ Glutathione metabolism
+ _ Metabolic pathways
+"
+"6","K00818","ko00220_ko01100_ko01110_ko01130_ko01210_ko01230","Arginine biosynthesis
+ _ Metabolic pathways
+ _ Biosynthesis of secondary metabolites
+ _ Biosynthesis of antibiotics
+ _ 2-Oxocarboxylic acid metabolism
+ _ Biosynthesis of amino acids
+"
+"7","K00836","ko00260_ko01100_ko01120_ko01210_ko01230","Glycine, serine and threonine metabolism
+ _ Metabolic pathways
+ _ Microbial metabolism in diverse environments
+ _ 2-Oxocarboxylic acid metabolism
+ _ Biosynthesis of amino acids
+"
+"8","K00851","ko00030_ko01100_ko01110_ko01120_ko01130_ko01200","Pentose phosphate pathway
+ _ Metabolic pathways
+ _ Biosynthesis of secondary metabolites
+ _ Microbial metabolism in diverse environments
+ _ Biosynthesis of antibiotics
+ _ Carbon metabolism
+"
+"9","K00926","ko00220_ko00230_ko00910_ko01100_ko01120_ko01200","Arginine biosynthesis
+ _ Purine metabolism
+ _ Nitrogen metabolism
+ _ Metabolic pathways
+ _ Microbial metabolism in diverse environments
+ _ Carbon metabolism
+"
+"10","K00930","ko00220_ko01100_ko01110_ko01130_ko01210_ko01230","Arginine biosynthesis
+ _ Metabolic pathways
+ _ Biosynthesis of secondary metabolites
+ _ Biosynthesis of antibiotics
+ _ 2-Oxocarboxylic acid metabolism
+ _ Biosynthesis of amino acids
+"
+"11","K00949","ko00730_ko01100","Thiamine metabolism
+ _ Metabolic pathways
+"
+"12","K01647","ko00020_ko00630_ko01100_ko01110_ko01120_ko01130_ko01200_ko01210_ko01230","Citrate cycle (TCA cycle)
+ _ Glyoxylate and dicarboxylate metabolism
+ _ Metabolic pathways
+ _ Biosynthesis of secondary metabolites
+ _ Microbial metabolism in diverse environments
+ _ Biosynthesis of antibiotics
+ _ Carbon metabolism
+ _ 2-Oxocarboxylic acid metabolism
+ _ Biosynthesis of amino acids
+"
+"13","K01682","ko00020_ko00630_ko00640_ko00720_ko01100_ko01110_ko01120_ko01130_ko01200_ko01210_ko01230","Citrate cycle (TCA cycle)
+ _ Glyoxylate and dicarboxylate metabolism
+ _ Propanoate metabolism
+ _ Carbon fixation pathways in prokaryotes
+ _ Metabolic pathways
+ _ Biosynthesis of secondary metabolites
+ _ Microbial metabolism in diverse environments
+ _ Biosynthesis of antibiotics
+ _ Carbon metabolism
+ _ 2-Oxocarboxylic acid metabolism
+ _ Biosynthesis of amino acids
+"
+"14","K01737","ko00790_ko01100","Folate biosynthesis
+ _ Metabolic pathways
+"
+"15","K01955","ko00240_ko00250_ko01100","Pyrimidine metabolism
+ _ Alanine, aspartate and glutamate metabolism
+ _ Metabolic pathways
+"
+"16","K01956","ko00240_ko00250_ko01100","Pyrimidine metabolism
+ _ Alanine, aspartate and glutamate metabolism
+ _ Metabolic pathways
+"
+"17","K04072","ko00010_ko00071_ko00350_ko00620_ko00625_ko00626_ko00650_ko01100_ko01110_ko01120_ko01130_ko01220","Glycolysis / Gluconeogenesis
+ _ Fatty acid degradation
+ _ Tyrosine metabolism
+ _ Pyruvate metabolism
+ _ Chloroalkane and chloroalkene degradation
+ _ Naphthalene degradation
+ _ Butanoate metabolism
+ _ Metabolic pathways
+ _ Biosynthesis of secondary metabolites
+ _ Microbial metabolism in diverse environments
+ _ Biosynthesis of antibiotics
+ _ Degradation of aromatic compounds
+"
+"18","K12373","ko00511_ko00513_ko00520_ko00531_ko00603_ko00604_ko01100_ko04142","Other glycan degradation
+ _ Various types of N-glycan biosynthesis
+ _ Amino sugar and nucleotide sugar metabolism
+ _ Glycosaminoglycan degradation
+ _ Glycosphingolipid biosynthesis - globo and isoglobo series
+ _ Glycosphingolipid biosynthesis - ganglio series
+ _ Metabolic pathways
+ _ Lysosome
+"

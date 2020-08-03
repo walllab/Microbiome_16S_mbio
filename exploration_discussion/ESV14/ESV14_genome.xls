@@ -1,0 +1,4 @@
+taxon_oid	Domain	Status	Study Name	Genome Name / Sample Name	Sequencing Center	IMG Genome ID 	Genome Size   * assembled	Gene Count   * assembled	
+2513237324	Bacteria	Permanent Draft	Human Microbiome Project (HMP) Reference Genomes	Desulfovibrio sp. 6_1_46AFAA	Broad Institute	2513237324	3826115	3380	
+2562617147	Bacteria	Permanent Draft	Human Microbiome Project (HMP) Reference Genomes	Desulfovibrio sp. 3_1_syn3	Broad Institute	2562617147	3663932	3157	
+2684623112	Bacteria	Finished	Human oral bacterial isolates genome sequencing	Desulfovibrio fairfieldensis CCUG 45958	The Forsyth Institute	2684623112	3699310	3202	

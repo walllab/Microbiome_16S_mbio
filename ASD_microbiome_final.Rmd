@@ -1,0 +1,234 @@
+---
+title: "ASD_microbiome_final"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '~/Lab/Microbiome_ASD_16S/')
+knitr::opts_chunk$set(cache=TRUE)
+library(phyloseq)
+library(ape)
+library(dplyr)
+library(structSSI)
+library(reshape2)
+library(ggplot2)
+library(igraph)
+library(readr)
+library(gage)
+source('~/Lab/Microbiome_ASD_16S/pair_analysis/mc.R')
+source('~/Lab/Microbiome_ASD_16S/scripts/getTables.R')
+source('~/Lab/Microbiome_ASD_16S/metagenomseq/ZIG_mixture_model.R')
+source('~/Lab/Microbiome_ASD_16S/pathway_enrichment/pval_plotting.R')
+```
+
+###Make Phyloseq
+```{r}
+#Removed ids 168.1 and 384 in dada2 quality check
+#Removed ids 163 and 211 b/c too old
+biom <- import_biom("data/otu_table_qc_age.biom")
+otu <- otu_table(biom, taxa_are_rows = T)
+map <- read.delim("mapping/mapping_final_withOutliers.txt")
+rownames(map) <- map$SampleID
+taxa<- read.csv("dada2/taxa.txt", row.names=1)
+tree <- read.tree("tree/tree_mle_gtr_rootArchae_127.tre")
+
+ps <- phyloseq(otu, sample_data(map), tax_table(as.matrix(taxa)), tree)
+
+duplicates <- c("178.6", "179.6", "185.6", "188.6", "220.6", "221.6", "385") # choose to keep 385.6 b/c more reads than its duplicate
+ps <- subset_samples(ps, !(SampleID %in% duplicates))
+
+veryLowDiversity <- c("173", "367") #Outliers
+ps <- subset_samples(ps, !(SampleID %in% veryLowDiversity))
+
+#saveRDS(ps, "data/ps_noDuplicates.RDS")
+
+```
+
+###Load Data
+```{r loadData, eval = F}
+ps <- readRDS("data/ps_noDuplicates.RDS")
+phy_tree(ps) <- read.tree("tree/tree_mle_gtr_rootArchae_127.tre")
+```
+
+###Declare function to make boxplots
+```{r}
+make_boxplots <- function(rsv_table, grouping, extraFeatureLabeling, pvals, title = "", xlab = "", ylab = ""){
+  # rsv_table should be a sample x feature table
+  # grouping should match the samples and describe what condition the samples have
+  # extraFeatureLabeling is a vector that matched the features in the rsv_table that describes extra info you want to display, in this case genus
+  #pvals <- round(pvals, digits = 2)
+  pvals[pvals < .01] = "***"
+  df_grouped <- data.frame(cbind(rsv_table), grouping) # Create dataframe with RSV abundances and Group
+
+  colnames(df_grouped) <- c(colnames(rsv_table), "Group") # Rename the columns so we can refer to them later
+  
+  grouped_stacked <- melt(df_grouped, id = "Group") # Put dataframe in form that's easy to use with ggplot
+  
+  # Include Genus name in dataframe for graph labelling
+  match_seq_to_extraInfo <- data.frame(rsv_name =colnames(rsv_table), extraInfo = extraFeatureLabeling) # Create little mapping dataframe for rsv_names to their genuses
+  match_seq_to_pval <- data.frame(rsv_name = colnames(rsv_table), pval_adj = pvals) # Create little mapping dataframe for rsv_names to their genuses
+  grouped_stacked$extraInfo <- as.character(match_seq_to_extraInfo$extraInfo[match(grouped_stacked$variable, match_seq_to_extraInfo$rsv_name)]) # assign genus to each rsv in ggplot friendly format
+  grouped_stacked$pval <- as.character(match_seq_to_pval$pval_adj[match(grouped_stacked$variable, match_seq_to_pval$rsv_name)]) # assign genus to each rsv in ggplot friendly format
+
+  # Plot! The function facet_wrap will break graphs up by whatever variables you put after the '~' character. In this case, we want to break it up by RSV name AND genus name
+  p <- ggplot(grouped_stacked, aes(x=Group, y = value)) + geom_boxplot(aes(fill = Group)) +
+  geom_jitter(aes(x = Group, y = value), position=position_jitter(0.2), cex=1.5, color="gray44") + facet_wrap(~ variable + extraInfo + pval, scale = "free") + labs(title = title, x = xlab, y = ylab) + scale_y_log10() + theme_minimal()
+  
+  print(p)
+}
+
+```
+
+###Declare function to normalize
+```{r func_deseqNorm}
+deSeqNorm <- function(ps){
+  library(DESeq2)
+  ps_dds <- phyloseq_to_deseq2(ps, ~ Treatment )
+  ps_dds <- estimateSizeFactors(ps_dds, type = "poscounts")
+  ps_dds <- estimateDispersions(ps_dds)
+  abund <- getVarianceStabilizedData(ps_dds)
+  abund <- abund + abs(min(abund)) #don't allow deseq to return negative counts
+  ps_deSeq <- phyloseq(otu_table(abund, taxa_are_rows = T), sample_data(ps), tax_table(ps), phy_tree(ps))
+  return(ps_deSeq)
+}
+
+#See workflow.Rmd for justification on normalization technique
+```
+
+
+
+###Declare function to filter
+```{r func_filterPrevalence}
+filterTaxaByPrevolence <- function(ps, percentSamplesPresentIn){
+  prevalenceThreshold <- percentSamplesPresentIn * nsamples(ps)
+  toKeep <- apply(data.frame(otu_table(ps)), 1, function(taxa) return(sum(taxa > 0) > prevalenceThreshold))
+  ps_filt <- prune_taxa(toKeep, ps)
+  return(ps_filt)
+}
+```
+
+###Filter and normalize
+```{r filter_and_norm}
+prevFiltThresh = .03
+ps_filt <- filterTaxaByPrevolence(ps, prevFiltThresh)
+ps_filt_norm <- deSeqNorm(ps_filt)
+```
+
+
+
+###Hierarchcal testing: plots are abundances seen in deseq normalized data
+```{r , func_HMHT}
+hierarchicalMultTest <- function(ps){
+  
+  edge_list <- get.edgelist(as.igraph(phy_tree(ps)))
+  unadj_p <- treePValues(edge_list, otu_table(ps), sample_data(ps)$Treatment)
+  hfdr_res <- hFDR.adjust(unadj_p, edge_list, alpha = .2)
+  summary(hfdr_res)
+  
+}
+```
+
+###Run HMHT
+```{r run_HMHT, eval = F}
+df <- hierarchicalMultTest(ps_filt_norm)
+#We get no significant results, which makes us think that rather than a weak, dispersed signal that can be captured by aggregation, 
+#we should probably be looking for a few stronger, rarer signals
+```
+
+
+
+###Run MC permutation test
+```{r, fig.height = 15, fig.width= 15}
+ ps_pairs <- subset_samples(ps_filt_norm, !(SampleID %in% c("45.1", "233"))) #take out the third siblings
+pairs_to_keep <- sample_data(ps_pairs)$Pair[duplicated(sample_data(ps_pairs)$Pair)]
+ps_pairs <- subset_samples(ps_pairs, Pair %in% pairs_to_keep)
+
+  
+  #ps_use <- ps_deSeq
+  #nullDists <- runSimulations(otu_table(ps_pairs), sample_data(ps_pairs), numSims= 10000) #returns a simulation X factor table
+  #saveRDS(nullDists, paste("pair_analysis_OTU_picrust/nullDist_", prevFiltThresh, "filter_", nsamples(ps_pairs), "s_adj.RDS", sep = ""))
+  
+  nullDists <- readRDS(paste("pair_analysis_OTU_picrust/nullDist_", prevFiltThresh, "filter_", nsamples(ps_pairs), "s_adj.RDS", sep = ""))
+  mc_res = mcPermutationTest(ps_pairs, null_difference_means = nullDists, numSims = 10000) #Pass loaded null dists
+  
+  mc_res$nb_non_zero = apply(otu_table(ps_pairs)[mc_res$seqs, ], 1, function(tax) return(sum(tax>0))) #find the number of samples that taxa is present in
+  saveRDS(mc_res, file= paste("pair_analysis_OTU_picrust/mc_", prevFiltThresh, "filter_", nsamples(ps_pairs), "s_adj.RDS", sep = ""))
+  
+  make_boxplots(t(otu_table(ps_pairs)[mc_res$seqs, ]), sample_data(ps_pairs)$Treatment, paste(mc_res$Family, mc_res$Genus, mc_res$Species), mc_res$pvals_adj)
+```
+
+###Run DESeq proper
+```{r, fig.height = 15, fig.width=15}
+runDESeq <- function(ps){
+  diagdds = phyloseq_to_deseq2(ps, ~ Treatment) 
+  diagdds <- estimateSizeFactors(diagdds, type = "poscounts")
+  diagdds <- DESeq(diagdds) 
+  res = results(diagdds, contrast = c("Treatment", "Aut", "Control"))
+  res$padj[is.na(res$padj)] = 1
+  sig <- res[res$padj < .05,]
+  sigtab <- data.frame(cbind(sig, tax_table(ps)[rownames(sig), ]))
+  
+  return(sigtab)
+  
+}
+
+```
+
+```{r, fig.height = 15, fig.width=15}
+deseq_res <- runDESeq(ps_filt)
+make_boxplots(t(otu_table(ps_filt_norm)[rownames(deseq_res), ]), sample_data(ps_filt_norm)$Treatment, paste(deseq_res$Family, deseq_res$Genus, deseq_res$Species), deseq_res$padj)
+```
+
+###Run ZIG model fitting and prediction
+```{r, fig.height= 15, fig.width=15}
+zig_res <- run_metagenom_seq(ps_filt, maxit =10)
+zig_res <- data.frame(cbind(zig_res), tax_table(ps_filt)[rownames(zig_res), ])
+make_boxplots(t(otu_table(ps_filt)[rownames(zig_res), ]), sample_data(ps_filt)$Treatment, paste(zig_res$Family, zig_res$Genus, zig_res$Species), zig_res$adjPvalues)
+```
+
+
+
+#Run and plot GSEA for pathways
+```{r}
+gs <- readRDS("pathway_enrichment/final_pathways_asList.Rds")
+
+#Run this to redo calculations. Here, we load the saved object to save time
+  #loc.koTxt <- "pathway_enrichment/piphillan_results_noDuplicates_filter03_deseq/kegg_output/ko_abund_table_unnorm.txt"
+  #table <- as.data.frame(read_delim(loc.koTxt, "\t", escape_double = FALSE, trim_ws = TRUE))
+  #rownames(table) <- table[,1]
+  #table <- table[,-1]
+
+#create pathway table by summing the relative contribution of each KO to each pathway
+#Divide each KO abundance by the number of pathways that it is a part of, based on the database
+#Don't need to re-run, just load the saved one
+  #numPathways_perKO <- sapply(rownames(table), function(ko_name) return(sum(unlist(gs) %in% ko_name)))
+  #numPathways_perKO <- numPathways_perKO[numPathways_perKO != 0]
+  #table <- table[rownames(table) %in% names(numPathways_perKO),]
+  #table_norm <- table / numPathways_perKO
+  #saveRDS(table_norm, "pathway_enrichment/ko_abund_table_normByPathway.Rds")
+table_norm <- readRDS("pathway_enrichment/ko_abund_table_normByPathway.Rds")
+colnames(table_norm) <- sample_data(ps_filt_norm)$SampleID
+
+ps_kos <- phyloseq(otu_table(table_norm, taxa_are_rows = T), sample_data(ps_filt_norm))
+ps_kos_aut <- subset_samples(ps_kos, Treatment == "Aut")
+ps_kos_control <- subset_samples(ps_kos, Treatment == "Control")
+
+
+exp_table <- cbind(otu_table(ps_kos_control), otu_table(ps_kos_aut))
+map <- rbind(sample_data(ps_kos_control), sample_data(ps_kos_aut))
+
+e <- gage(exp_table, gsets = gs, 
+          ref = seq(1,nsamples(ps_kos_control)), 
+          samp = seq((nsamples(ps_kos_control) + 1),(nsamples(ps_kos_control)+ nsamples(ps_kos_aut))),
+          compare = 'unpaired')
+
+thresh = 8
+relevant <- e$stats[apply(e$stats, 1, function(x) return(sum(is.nan(x)) < 5) & sum(is.na(x) < 5)), ]
+greater <-  e$greater[apply(e$greater, 1, function(x) return(sum(is.nan(x)) < 5 & sum(is.na(x)) < 5)), ]
+less <-  e$less[apply(e$less, 1, function(x) return(sum(is.nan(x)) < 5 & sum(is.na(x)) < 5)), ]
+
+plotPValues(e$greater, e$less, phy, condition="All Autism and Control \n KO pathways")
+```
+
+
